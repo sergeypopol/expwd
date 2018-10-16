@@ -5,16 +5,28 @@ defmodule Expwd.Hashed do
 
   @type t :: %__MODULE__{
     alg: atom(),
-    hash: binary(),
-    salt: binary
+    hash: binary()
   }
 
   @enforce_keys [:alg, :hash]
-  defstruct [:alg, :hash, :salt]
+  defstruct [:alg, :hash]
 
-  @spec gen(binary, atom(), non_neg_integer()) :: t
-  def gen(password, alg \\ :sha256, salt_len \\ 16)
-  def gen(password, alg, 0) do
+  @spec new() :: {String.t, t}
+  def new() do
+    pwd = Base.encode64(:crypto.strong_rand_bytes(32), padding: false)
+
+    {
+      pwd,
+      %__MODULE__{
+        alg: :sha256,
+        hash: :crypto.hash(:sha256, pwd)
+      }
+    }
+  end
+
+  @spec gen(binary, Expwd.supported_algs) :: t
+  def gen(password, alg \\ :sha256)
+  def gen(password, alg) do
     if alg not in Expwd.supported_hash_algorithms()
     do
       raise Expwd.UnsupportedHashAlgorithm, message: "Unsupported hash algorithm #{alg}"
@@ -22,35 +34,12 @@ defmodule Expwd.Hashed do
 
     %__MODULE__{
       alg: alg,
-      hash: :crypto.hash(alg, password),
-      salt: nil
+      hash: :crypto.hash(alg, password)
     }
   end
 
-  def gen(password, alg, salt_len) do
-    if alg not in Expwd.supported_hash_algorithms()
-    do
-      raise Expwd.UnsupportedHashAlgorithm, message: "Unsupported hash algorithm #{alg}"
-    end
-
-    salt = gen_salt(salt_len)
-    %__MODULE__{
-      alg: alg,
-      hash: :crypto.hash(alg, salt <> password),
-      salt: salt
-    }
+  @spec to_string(t) :: String.t
+  def to_string(%Expwd.Hashed{alg: alg, hash: hash}) do
+    ":expwd:#{alg}:#{Base.encode64(hash, padding: false)}"
   end
-
-  defp gen_salt(salt_len), do: :crypto.strong_rand_bytes(salt_len)
-
-  #TODO: define string format
-  #defimpl String.Chars, for: Expwd.Hashed do
-  #  def to_string(%Expwd.Hashed{alg: alg, hash: hash, salt: nil}) do
-  #    "#{alg}:#{Base.encode16(hash)}"
-  #  end
-  #
-  #  def to_string(%Expwd.Hashed{alg: alg, hash: hash, salt: salt}) do
-  #    "#{alg}:#{Base.encode16(salt)}$#{Base.encode16(hash)}"
-  #  end
-  #end
 end
