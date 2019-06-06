@@ -32,16 +32,13 @@ iex> Expwd.Hashed.Portable.to_portable( %Expwd.Hashed{
 ...>    hash: <<58, 41, 140, 143, 225, 47, 17, 125, 45, 76, 46, 61, 47, 218, 172, 73,
 ...>      241, 142, 78, 207, 59, 188, 148, 154, 6, 209, 23, 206, 235, 119, 39, 37>>
 ...>  })
-{:expwd, :sha256, "OimMj+EvEX0tTC49L9qsSfGOTs87vJSaBtEXzut3JyU"}
+"expwd:sha256:OimMj+EvEX0tTC49L9qsSfGOTs87vJSaBtEXzut3JyU"
 
-iex> from_str = Expwd.Hashed.Portable.from_portable({:expwd, :sha256, "OimMj+EvEX0tTC49L9qsSfGOTs87vJSaBtEXzut3JyU"})
+iex> Expwd.Hashed.Portable.from_portable("expwd:sha256:xSE6MkeC+gW7R/lEZKxsWGDs1MlqEV4u693fCBNlV4g") 
 %Expwd.Hashed{
   alg: :sha256,
-  hash: <<58, 41, 140, 143, 225, 47, 17, 125, 45, 76, 46, 61, 47, 218, 172, 73,
-    241, 142, 78, 207, 59, 188, 148, 154, 6, 209, 23, 206, 235, 119, 39, 37>>
+  hash: <<197, 33, 58, 50, 71, 130, 250, 5, 187, 71, 249, 68, 100, 172, 108, 88,
+    96, 236, 212, 201, 106, 17, 94, 46, 235, 221, 223, 8, 19, 101, 87, 136>>
 }
-
-iex> Expwd.secure_compare(pwd, from_str)
-true
 
 ```
