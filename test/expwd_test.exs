@@ -3,6 +3,7 @@ defmodule ExpwdTest do
   doctest Expwd
 
   @tag timeout: 60 * 60000
+
   test "Constant compare" do
     pwd1 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     pwd2 = "a_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
